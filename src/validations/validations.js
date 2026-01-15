@@ -1,10 +1,10 @@
 export const sendChatValidation = {
-  prompt: {
+  messages: {
     notEmpty: {
-      errorMessage: "Input the prompt",
+      errorMessage: "messages should not be null",
     },
   },
-  reason: {
+  reasoning: {
     notEmpty: {
       errorMessage: "reason should not be null",
     },

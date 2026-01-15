@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { checkSchema, matchedData, validationResult } from "express-validator";
 import { sendChatValidation } from "../validations/validations.js";
+import { fetchFromAgent } from "../libs/utils.js";
 
 const router = Router();
 
-router.post("/prompt", checkSchema(sendChatValidation), (req, res) => {
+router.post("/prompt", checkSchema(sendChatValidation), async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log(errors);
@@ -15,8 +16,12 @@ router.post("/prompt", checkSchema(sendChatValidation), (req, res) => {
   }
 
   const data = matchedData(req);
-
-  return res.json({ message: data.prompt });
+  try {
+    const agentResponse = await fetchFromAgent(data.messages, data.reasoning);
+    return res.json({ message: agentResponse });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
 });
 
 export default router;
